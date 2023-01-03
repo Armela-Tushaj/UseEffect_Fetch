@@ -1,0 +1,57 @@
+import "./styles.css";
+import { useEffect, useState } from "react";
+
+export default function App() {
+  const [people, setPeople] = useState([]);
+  const [number, setNumber] = useState(0);
+  console.log("people: ", people);
+
+  useEffect(() => {
+    fetch("https://randomuser.me/api/")
+      .then((response) => response.json())
+      .then((data) => {
+        const person = { ...data.results[0], backgroundColor: randomBgColor() };
+        setPeople((oldPeopleArray) => [...oldPeopleArray, person]);
+      })
+      .catch(() => {});
+  }, [number]);
+
+  function renderPerson(person, index) {
+    return (
+      <div
+        style={{
+          marginBottom: "20px",
+          backgroundColor: person.backgroundColor
+        }}
+        key={index}
+      >
+        <div>{person.name.title}</div>
+        <div>{person.name.first}</div>
+        <div>{person.name.last}</div>
+        <div>{person.phone}</div>
+      </div>
+    );
+  }
+
+  function randomBgColor() {
+    const x = Math.floor(Math.random() * 256);
+    const y = Math.floor(Math.random() * 256);
+    const z = Math.floor(Math.random() * 256);
+    return "rgb(" + x + "," + y + "," + z + ")";
+  }
+
+  return (
+    <div className="App">
+      <button
+        onClick={() => {
+          setNumber((oldNumber) => oldNumber + 1);
+        }}
+      >
+        Add another
+      </button>
+      {people.map((person, index) => {
+        return renderPerson(person, index);
+      })}
+    </div>
+  );
+}
